@@ -9,7 +9,7 @@ const readUsersFromFile = () => {
         const data = fs.readFileSync(userFilePath, "utf8");
         return JSON.parse(data);
     } catch (e) {
-        throw new Error("Error: Reading User Data__", e.message);
+        throw new Error(`Error: Reading User Data__${e.message}`);
     }
 
 }
@@ -18,7 +18,7 @@ const writeUsersToFile = (usersData) => {
         const data = JSON.stringify(usersData)
         fs.writeFileSync(userFilePath, data)
     } catch (e) {
-        throw new Error("Error: Writing User Data__", e.message);
+        throw new Error(`Error: Writing User Data__${e.message}`);
     }
 }
 const getAllUsers = () => {

@@ -10,7 +10,7 @@ const readQuizzesFromFile = () => {
         const data = fs.readFileSync(quizFilePath, "utf8");
         return JSON.parse(data);
     } catch (e) {
-        throw new Error("Error: Reading Quiz Data__", e.message);
+        throw new Error(`Error: Reading Quiz Data__${e.message}`);
     }
 }
 const writeQuizzesToFile = (quizData) => {
@@ -18,7 +18,7 @@ const writeQuizzesToFile = (quizData) => {
         const data = JSON.stringify(quizData);
         fs.writeFileSync(quizFilePath, data);
     } catch (e) {
-        throw new Error("Error: writing Quiz Data__", e.message);
+        throw new Error(`Error: Writing Quiz Data__${e.message}`);
     }
 }
 const readQuestionsFromFile = () => {
@@ -26,7 +26,7 @@ const readQuestionsFromFile = () => {
         const data = fs.readFileSync(questionsFilePath, "utf8");
         return JSON.parse(data);
     } catch (e) {
-        throw new Error("Error: Reading Questions Data__", e.message);
+        throw new Error(`Error: Reading Questions Data__${e.message}`);
     }
 }
 const writeQuestionsToFile = (qs) => {
@@ -34,22 +34,24 @@ const writeQuestionsToFile = (qs) => {
         const data = JSON.stringify(qs);
         fs.writeFileSync(questionsFilePath, data);
     } catch (e) {
-        throw new Error("Error: writing questions Data__", e.message);
+        throw new Error(`Error: Writing Questions Data__${e.message}`);
     }
 }
 const mapQuizQs = (quiz) => {
     const questions = readQuestionsFromFile();
     const myQuiz = {
         ...quiz,
-        questions: quiz.questions.map(qid => questions.find(q => q.id === qid)),
+        questions: quiz.questions.map(qid => questions.find(q => q.id === qid)).filter(q => q !== undefined),
     }
     return myQuiz;
 }
 const getAllQuizzes = () => {
     try {
         const quizzes = readQuizzesFromFile();
+        console.log("Raw quizzes data:", quizzes);
         return quizzes.map(mapQuizQs);
     } catch (e) {
+        console.log("Get all Quizzes error:", e);
         throw { status: 404, message: "Quizzes Not Found" }
     }
 }
@@ -95,16 +97,16 @@ const deleteQuiz = (id) => {
     const quizzes = readQuizzesFromFile();
     const quizIndex = getQuizIndex(id);
     if (quizIndex === -1) return false;
-    userInfo.splice(quizIndex, 1);
+    quizzes.splice(quizIndex, 1);
     writeQuizzesToFile(quizzes);
     return true;
 }
 
-const getQuizQuestions = (quiz) => {
+const getQuizQuestions = (quizId) => {
     try {
-        return (mapQuizQs(quiz).questions)
+        return getQuizById(quizId).questions
     } catch (e) {
-        throw new Error("Error: Getting Quiz Questions__", e.message)
+        throw new Error(`Error: Getting Quiz Questions__${e.message}`);
     }
 
 }
@@ -120,7 +122,7 @@ const addQuestion = (question, quizId) => {
     quizzes[quizIndex].questions.push(newQuestion.id);
     writeQuestionsToFile(questions);
     writeQuizzesToFile(quizzes);
-    return newQuestion;
+    return quizzes[quizIndex];
 }
 const editQuestion = (id, questionEditRequest) => {
     const questions = readQuestionsFromFile();
@@ -129,14 +131,14 @@ const editQuestion = (id, questionEditRequest) => {
     writeQuestionsToFile(questions);
     return questions[questionIndex];
 }
-const deleteQuestion = (questionId, quizId) => {
+const deleteQuestion = (quizId, questionId) => {
     const quizzes = readQuizzesFromFile();
     const quizIndex = getQuizIndex(quizId);
-    const questions = quizzes[quizIndex].questions;
-    const questionIndex = questions.findIndex((q) => q.id === questionId);
+    const questionIds = quizzes[quizIndex].questions;
+    const questionIndex = questionIds.indexOf(questionId);
     if (questionIndex === -1) return false;
-    questions.splice(questionIndex, 1);
-    writeQuizzesToFile();
+    questionIds.splice(questionIndex, 1);
+    writeQuizzesToFile(quizzes);
     return true;
 }
 

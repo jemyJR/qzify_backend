@@ -26,7 +26,7 @@ const addQuiz = (req, res, next) => {
 }
 const editQuiz = (req, res, next) => {
     try {
-        const updatedQuiz = quizService.addQuiz(req.params.id, req.body);
+        const updatedQuiz = quizService.editQuiz(req.params.id, req.body);
         res.send(updatedQuiz);
     } catch (e) {
         next(e);
@@ -43,7 +43,7 @@ const deleteQuiz = (req, res, next) => {
 
 const getQuizQuestions = (req, res, next) => {
     try {
-        const questions = quizService.getQuizQuestions(req.params.id);
+        const questions = quizService.getQuizQuestions(req.params.quizId);
         res.send(questions);
     } catch (e) {
         next(e);
@@ -68,7 +68,7 @@ const editQuestion = (req, res, next) => {
 }
 const deleteQuestion = (req, res, next) => {
     try {
-        const questionDeleted = quizService.deleteQuestion(req.params.id, req.params.quizId);
+        const questionDeleted = quizService.deleteQuestion(req.params.quizId, req.params.id);
         questionDeleted ? res.send("Question Has Been Deleted Successfully") : res.send("Couldn't Delete the Question")
 
     } catch (e) {
