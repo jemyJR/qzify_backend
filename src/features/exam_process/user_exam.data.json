@@ -1,0 +1,27 @@
+{
+    "id": "exam123",
+    "userId": "user001",
+    "quizSnapshot": {
+        "id": "quiz001",
+        "name": "JavaScript Basics",
+        "duration": 30,
+        "grade": 100,
+        "questions": [
+            {
+                "id": "q1",
+                "questionText": "What is the result of `2 + '2'` in JavaScript?",
+                "options": [
+                    "4",
+                    "22",
+                    "Error",
+                    "NaN"
+                ],
+                "correctAnswer": "22",
+                "selectedAnswer": "4",
+                "hasAnswered": true,
+                "grade": 10
+            }
+        ]
+    },
+    "result": 0
+}
