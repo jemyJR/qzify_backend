@@ -1,5 +1,5 @@
 const UserService = require('./users.service');
-const sendErrorResponse = require('../shared/utils/errorHandler');
+const sendErrorResponse = require('../../shared/utils/errorHandler');
 
 class UserController {
 

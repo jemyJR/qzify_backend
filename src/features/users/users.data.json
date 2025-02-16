@@ -17,7 +17,7 @@
         "id": 3,
         "name": "Youssef Mohammed",
         "email": "youssef@example.com",
-        "password": "password789",
+        "password": "123",
         "role": "student"
     },
     {
@@ -40,5 +40,12 @@
         "email": "khaled1@example.com",
         "password": "password202",
         "role": "student"
+    },
+    {
+        "name": "Youssef Mohammed",
+        "email": "youssef1@example.com",
+        "password": "password789",
+        "role": "student",
+        "id": 7
     }
 ]
