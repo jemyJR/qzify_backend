@@ -7,6 +7,6 @@ authRouter.post('/login', authController.login);
 
 authRouter.post('/register', authController.register);
 
-authRouter.post('/change-password', authController.changePassword);
+authRouter.patch('/change-password', authController.changePassword);
 
 module.exports = { authRouter };
