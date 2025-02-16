@@ -9,5 +9,4 @@ loadEnv();
 app.use(express.json());
 app.use(loggerMiddleware);
 
-
 module.exports = { app };
