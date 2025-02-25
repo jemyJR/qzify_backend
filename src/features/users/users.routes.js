@@ -1,16 +1,19 @@
 const express = require('express');
 const usersController = require('./users.controller');
+const {userValidator}  = require('./user.validator');
+const { verifyJWT } = require('../../shared/middleware/verifyJWT.middleware');
+const { requireAdmin } = require('../../shared/middleware/requireAdmin.middleware');
 
 const userRouter = express.Router();
 
-userRouter.get('/', usersController.getUsers);
+userRouter.use( verifyJWT );
 
-userRouter.get('/:id', usersController.getUser);
+userRouter.get('/', requireAdmin, usersController.getUsers);
 
-userRouter.post('/', usersController.createUser);
+userRouter.get('/:id', usersController.getUserProfile);
 
-userRouter.put('/:id', usersController.updateUser);
+userRouter.put('/:id', userValidator.updateUser, usersController.updateUserProfile);
 
-userRouter.delete('/:id', usersController.deleteUser);
+userRouter.delete('/:id', requireAdmin, usersController.deleteUserProfile);
 
 module.exports = { userRouter };
