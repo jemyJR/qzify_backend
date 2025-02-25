@@ -1,60 +1,87 @@
 const AuthService = require('./auth.service');
-const sendErrorResponse = require('../../shared/utils/errorHandler');
 
 class AuthController {
-    static login(req, res) {
+    static async register(req, res, next) {
         try {
-            const { email, password } = req.body;
-            const user = AuthService.login(email, password);
-            res.json({
-                code: 200,
-                message: 'Login successful',
-                user
-            });
-        } catch (err) {
-            console.error(err);
-            if (err.message === 'Email or password is incorrect') {
-                sendErrorResponse(res, 400, err.message);
-                return;
-            }
-            res.status(500).send('Internal Server Error');
-        }
-    }
-
-    static register(req, res) {
-        try {
-            const newUser = AuthService.register(req.body);
+            const newUser = req.body;
+            const user = await AuthService.registerUser(newUser);
             res.json({
                 code: 201,
-                message: 'User created successfully',
-                user: newUser
+                message: 'User registered successfully',
+                user,
             });
         } catch (err) {
-            console.error(err);
-            if (err.message === 'Email already exists') {
-                sendErrorResponse(res, 400, err.message);
-                return;
-            }
-            res.status(500).send('Internal Server Error');
+            next(err);
         }
     }
 
-    static changePassword(req, res) {
+    static async login(req, res, next) {
         try {
-            const { email, oldPassword, newPassword } = req.body;
-            const user = AuthService.changePassword(email, oldPassword, newPassword);
+            const { email, password } = req.body;
+            const loginData = await AuthService.loginUser(email, password);
+            res.cookie('refreshToken', loginData.refreshToken, {
+                httpOnly: true,
+                sameSite: 'none',
+                secure: true,
+                maxAge: 1000 * 60 * 60 * 24 * 7,
+            });
+            
+            res.json({
+                code: 200,
+                message: 'User logged in successfully',
+                ...loginData,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+    static async refreshToken(req, res, next) {
+        try {
+            const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
+            const tokenData = await AuthService.refreshToken(refreshToken);
+            res.cookie('refreshToken', tokenData.refreshToken, {
+                httpOnly: true,
+                sameSite: 'none',
+                secure: true,
+                maxAge: 1000 * 60 * 60 * 24 * 7,
+            });
+            res.json({
+                code: 200,
+                message: 'Token refreshed successfully',
+                ...tokenData,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+    static async logout(req, res, next) {
+        try {
+            const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
+            const message = await AuthService.logout(refreshToken);
+            res.clearCookie('refreshToken',{
+                httpOnly: true,
+                sameSite: 'none',
+                secure: true,
+            });
+            res.json({
+                code: 200,
+                message,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+    static async changePassword(req, res, next) {
+        try {
+            const { id } = req.user;
+            const { oldPassword, newPassword } = req.body;
+            await AuthService.changePassword(id, oldPassword, newPassword);
             res.json({
                 code: 200,
                 message: 'Password changed successfully',
-                user
             });
         } catch (err) {
-            console.error(err);
-            if (err.message === 'Email or password is incorrect' || err.message === 'New password must be different') {
-                sendErrorResponse(res, 400, err.message);
-                return;
-            }
-            res.status(500).send('Internal Server Error');
+            next(err);
         }
     }
 }
