@@ -1,85 +1,51 @@
 const UserService = require('./users.service');
-const sendErrorResponse = require('../../shared/utils/errorHandler');
 
 class UserController {
 
-    static getUsers(req, res) {
+    static async getUsers(req, res , next) {
         try {
-            const users = UserService.getUsers();
+            const users = await UserService.getUsers();
             res.json(users);
         } catch (err) {
-            console.error(err);
-            res.status(500).send('Internal Server Error');
+            next(err);
         }
     }
 
-    static getUser(req, res) {
+    static async getUserProfile(req, res, next) {
         try {
-            const id = parseInt(req.params.id);
-            const user = UserService.getUser(id);
+            const id = req.params.id;
+            const user = await UserService.getUserById(id);
             res.json(user);
         } catch (err) {
-            console.error(err);
-            if (err.message === 'User not found') {
-                sendErrorResponse(res, 404, err.message);
-                return;
-            }
-            res.status(500).send('Internal Server Error');
+            next(err);
         }
     }
 
-    static createUser(req, res) {
+    static async updateUserProfile(req, res , next) {
         try {
-            const newUser = UserService.createUser(req.body);
-            res.json({
-                code: 201,
-                message: 'User created successfully',
-                user: newUser
-            });
-        } catch (err) {
-            console.error(err);
-            if (err.message === 'Email already exists') {
-                sendErrorResponse(res, 400, err.message);
-                return;
-            }
-            res.status(500).send('Internal Server Error');
-        }
-    }
-
-    static updateUser(req, res) {
-        try {
-            const id = parseInt(req.params.id);
-            const updatedUser = UserService.updateUser(id, req.body);
+            const id = req.params.id;
+            const updateData = req.body;
+            const updatedUser = await UserService.updateUser(id, updateData);
             res.json({
                 code: 200,
                 message: 'User updated successfully',
-                user: updatedUser
+                user: updatedUser,
             });
         } catch (err) {
-            console.error(err);
-            if (err.message === 'User not found') {
-                sendErrorResponse(res, 404, err.message);
-                return;
-            }
-            res.status(500).send('Internal Server Error');
+            next(err);
         }
     }
 
-    static deleteUser(req, res) {
+    static async deleteUserProfile(req, res , next) {
         try {
-            const id = parseInt(req.params.id);
-            UserService.deleteUser(id);
+            const id = req.params.id;
+            const message = await UserService.deleteUser(id);
             res.json({
                 code: 200,
-                message: 'User deleted successfully',
+                message,
             });
         } catch (err) {
-            console.error(err);
-            if (err.message === 'User not found') {
-                sendErrorResponse(res, 404, err.message);
-                return;
-            }
-            res.status(500).send('Internal Server Error');
+            next(err);
         }
     }
 }

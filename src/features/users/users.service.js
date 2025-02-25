@@ -1,57 +1,56 @@
-const { readData, writeData } = require('./users.repository');
+const User = require('./user.model');
+const bcrypt = require('bcrypt');
+const { ResourceNotFoundError, RuntimeError } = require('../../shared/utils/errorTypes');
 
 class UserService {
-    static getUsers() {
-        const users = readData();
+    static async getUsers() {
+        const users = await User.find().select('-password');
         return users;
     }
 
-    static getUser(id) {
-        const users = readData();
-        const user = users.find(user => user.id === id);
+    static async getUserById(id) {
+        const user =await User.findById(id).select('-password');
         if (!user) {
-            throw new Error('User not found');
+            throw new ResourceNotFoundError('User', 'id', id, 'User not found');
         }
         return user;
     }
 
-    static createUser(newUser) {
-        const users = readData();
-
-        const existingUser = users.find(user => user.email === newUser.email);
+    static async createUser(newUser) {
+        const existingUser = await User.findOne({ email: newUser.email });
         if (existingUser) {
-            throw new Error('Email already exists');
+            throw new RuntimeError('User already exists', 'User with this email already exists', 400);
         }
+        const hashedPassword = await bcrypt.hash(newUser.password, 10);
+        newUser.password = hashedPassword;
+        const user = new User(newUser);
+        await user.save();
+        const { password, ...userWithoutPassword } = user.toObject();
+        return userWithoutPassword;
 
-        const lastUser = users[users.length - 1];
-        newUser.id = lastUser.id + 1;
-        users.push(newUser);
-        writeData(users);
-        return newUser;
     }
 
-    static updateUser(id, updatedUser) {
-        const users = readData();
-        const index = users.findIndex(user => user.id === id);
-        if (index === -1) {
-            throw new Error('User not found');
+    static async updateUser(id, updatedUser) {
+        
+        if (updatedUser.hasOwnProperty('role')) {
+            delete updatedUser.role;
         }
-        updatedUser.id = id;
-        users[index] = updatedUser;
-        writeData(users);
-        return updatedUser;
+        
+        const user =await User.findByIdAndUpdate(id, updatedUser, { new: true }).select('-password');
+        if (!user) {
+            throw new ResourceNotFoundError('User', 'id', id, 'User not found');
+        }
+        return user;
     }
 
-    static deleteUser(id) {
-        const users = readData();
-        const index = users.findIndex(user => user.id === id);
-        if (index === -1) {
-            throw new Error('User not found');
+    static async deleteUser(id) {
+        const user = await User.findByIdAndDelete(id);
+        if (!user) {
+            throw new ResourceNotFoundError('User', 'id', id, 'User not found');
         }
-        users.splice(index, 1);
-        writeData(users);
-        return users;
+        return { message: 'User deleted successfully' };
     }
 }
 
 module.exports = UserService;
+
