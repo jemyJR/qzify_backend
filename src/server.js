@@ -5,8 +5,7 @@ const mongoose = require('mongoose');
 
 const DEFAULT_PORT = 3000;
 const PORT = process.env.PORT || DEFAULT_PORT;
-const MONGO_URL = process.env.DATABASE_URL;
-
+const MONGO_URL = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}/?${process.env.DB_OPTIONS}`;
 dbConnect(MONGO_URL);
 
 mongoose.connection.once('open', () => {
