@@ -1,18 +1,49 @@
-const express = require("express");
-const { loadEnv } = require("./shared/configs/loadEnv");
-const { loggerMiddleware, responseLogger } = require("./shared/middlewares/logger.middleware");
-const { errorHandler, routeNotFound } = require("./shared/middlewares/errorHandler.middleware")
-const { userRouter } = require("./features/auth/user.routes");
-const { quizRouter } = require("./features/quiz_management/quiz.routes")
+const express = require('express');
+const { loadEnv } = require('./shared/config/loadEnv');
 
-loadEnv()
+const cors = require('cors');
+const corsOptions = require('./shared/config/corsOrigins');
+
+const cookieParser = require('cookie-parser');
+
+const { loggerMiddleware } = require('./shared/middleware/logger.middleware');
+
+const { globalErrorHandlerMiddleware } = require('./shared/middleware/globalErrorHandler.middleware');
+const { globalValidationMiddleware } = require('./shared/middleware/globalValidation.middleware');
+
+const { userRouter } = require('./features/users/users.routes');
+const { authRouter } = require('./features/auth/auth.routes');
+const { quizzesRouter } = require('./features/quizzes/quizzes.routes');
+const { attemptsRouter } = require('./features/attempts/attempts.routes');
+
 const app = express();
+
+loadEnv();
+
+app.use(cors(corsOptions));
+
+app.use(cookieParser());
+
 app.use(express.json());
+
 app.use(loggerMiddleware);
 app.use(responseLogger);
 
-app.use("/users", userRouter);
-app.use("/quizzes", quizRouter);
+app.use(globalValidationMiddleware);
+
+app.use('/users', userRouter);
+
+app.use('/auth', authRouter);
+
+app.use('/quizzes', quizzesRouter);
+
+app.use('/attempts', attemptsRouter);
+
+app.all('*', (req, res) => {
+    res.status(404).json({ message: 'Route not found' });
+});
+
+app.use(globalErrorHandlerMiddleware);
 
 app.use(routeNotFound);
 app.use(errorHandler);
