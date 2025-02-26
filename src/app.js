@@ -20,7 +20,7 @@ const app = express();
 
 loadEnv();
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 app.use(cookieParser());
 
