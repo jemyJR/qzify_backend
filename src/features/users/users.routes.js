@@ -6,11 +6,9 @@ const { requireAdmin } = require('../../shared/middleware/requireAdmin.middlewar
 
 const userRouter = express.Router();
 
-// userRouter.use( verifyJWT );
+userRouter.use( verifyJWT );
 
-// userRouter.get('/', requireAdmin, usersController.getUsers);
-userRouter.get('/', usersController.getUsers);
-
+userRouter.get('/', requireAdmin, usersController.getUsers);
 
 userRouter.get('/:id', usersController.getUserProfile);
 
