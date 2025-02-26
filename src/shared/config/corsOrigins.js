@@ -1,13 +1,14 @@
 const allowedOrigins = require('./allowedOrigins');
 
 const coreOptions = {
-    origin: function (origin, callback) {
-        if (allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+    // origin: function (origin, callback) {
+    //     if (allowedOrigins.indexOf(origin) !== -1) {
+    //         callback(null, true);
+    //     } else {
+    //         callback(new Error('Not allowed by CORS'));
+    //     }
+    // },
+    origin: '*',
     credentials: true,
     optionSuccessStatus: 200,
 };
