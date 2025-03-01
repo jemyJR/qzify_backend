@@ -8,6 +8,8 @@ const { loggerMiddleware } = require('./shared/middleware/logger.middleware');
 const { globalErrorHandlerMiddleware } = require('./shared/middleware/globalErrorHandler.middleware');
 const { globalValidationMiddleware } = require('./shared/middleware/globalValidation.middleware');
 const swaggerMiddleware = require('./shared/middleware/swagger.middleware');
+const { rateLimiter } = require('./shared/middleware/rateLimiter.middleware');
+const { securityMiddleware } = require('./shared/middleware/security.middleware');
 
 const { configureRoutes } = require('./routes');
 
@@ -20,8 +22,11 @@ loadEnv();
 app.use(cors(corsOptions));
 app.use(cookieParser());
 
-app.use(express.json());
+app.use(express.json( {limit: '20kb'} ));
 app.use(express.urlencoded({ extended: true }));
+
+
+securityMiddleware(app);
 
 app.use(loggerMiddleware);
 
