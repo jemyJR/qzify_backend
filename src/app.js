@@ -1,43 +1,43 @@
 const express = require('express');
 const { loadEnv } = require('./shared/config/loadEnv');
-
 const cors = require('cors');
 const corsOptions = require('./shared/config/corsOrigins');
-
 const cookieParser = require('cookie-parser');
 
 const { loggerMiddleware } = require('./shared/middleware/logger.middleware');
-
 const { globalErrorHandlerMiddleware } = require('./shared/middleware/globalErrorHandler.middleware');
 const { globalValidationMiddleware } = require('./shared/middleware/globalValidation.middleware');
+const swaggerMiddleware = require('./shared/middleware/swagger.middleware');
+const { rateLimiter } = require('./shared/middleware/rateLimiter.middleware');
+const { securityMiddleware } = require('./shared/middleware/security.middleware');
 
-const { userRouter } = require('./features/users/users.routes');
-const { authRouter } = require('./features/auth/auth.routes');
-const { quizzesRouter } = require('./features/quizzes/quizzes.routes');
-const { attemptsRouter } = require('./features/attempts/attempts.routes');
+const { configureRoutes } = require('./routes');
 
 const app = express();
 
+
 loadEnv();
 
-app.use(cors(corsOptions));
 
+app.use(cors(corsOptions));
 app.use(cookieParser());
 
-app.use(express.json());
+app.use(express.json({ limit: '20kb' }));
+app.use(express.urlencoded({ extended: true }));
+
+
+securityMiddleware(app);
 
 app.use(loggerMiddleware);
-app.use(responseLogger);
+
+swaggerMiddleware(app);
+
 
 app.use(globalValidationMiddleware);
 
-app.use('/users', userRouter);
 
-app.use('/auth', authRouter);
+configureRoutes(app);
 
-app.use('/quizzes', quizzesRouter);
-
-app.use('/attempts', attemptsRouter);
 
 app.all('*', (req, res) => {
     res.status(404).json({ message: 'Route not found' });
@@ -45,7 +45,4 @@ app.all('*', (req, res) => {
 
 app.use(globalErrorHandlerMiddleware);
 
-app.use(routeNotFound);
-app.use(errorHandler);
-
-module.exports = { app }
+module.exports = { app };
