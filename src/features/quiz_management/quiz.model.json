@@ -1,9 +1,0 @@
-{
-    "id": "string",
-    "name": "string",
-    "duration": "number",
-    "grade": "number",
-    "questions": [
-        "Question"
-    ]
-}

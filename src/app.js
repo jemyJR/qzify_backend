@@ -30,6 +30,7 @@ securityMiddleware(app);
 
 app.use(loggerMiddleware);
 
+
 swaggerMiddleware(app);
 
 
