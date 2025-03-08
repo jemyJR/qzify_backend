@@ -3,11 +3,26 @@ const authService = require('./auth.service');
 exports.register = async function (req, res, next) {
     try {
         const newUser = req.body;
-        const user = await authService.registerUser(newUser);
+        const msg = await authService.registerUser(req.protocol, req.get('host'), newUser);
         res.json({
             code: 201,
-            message: 'User registered successfully',
-            user,
+            message: msg,
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+exports.verifyEmail = async (req, res, next) => {
+    try {
+        const user = await authService.verifyEmail(req.params.token);
+
+        if (!user) {
+            return res.status(400).send({ message: "Email Verification Failed" });
+        }
+
+        res.json({
+            message: "Email verified successfully!",
+            data: user
         });
     } catch (err) {
         next(err);
@@ -112,9 +127,6 @@ exports.resetPassword = async (req, res, next) => {
         if (!token) {
             return res.status(400).send({ message: "Password reset failed" });
         }
-        // const jwtExpiresInS = process.env.JWT_EXPIRES_IN_S;
-        // res.cookie('jwt', token, { httpOnly: true, maxAge: jwtExpiresInS })
-
         res.json({
             message: "Password has been reset",
             data: token

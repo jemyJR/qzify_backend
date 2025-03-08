@@ -2,20 +2,24 @@ const nodemailer = require("nodemailer");
 
 const sendEmail = async (option) => {
     const transporter = nodemailer.createTransport({
-        service: "gmail",
+        host: 'smtp.sendgrid.net',
+        port: 587,
         auth: {
-            user: process.env.USER_EMAIL,
-            pass: process.env.USER_EMAIL_PASSWORD
+            user: 'apikey',
+            pass: process.env.SEND_GRID_API_KEY
         },
         tls: {
-            rejectUnauthorized: false //dev only
+            rejectUnauthorized: false
         }
     })
     const mailOptions = {
-        from: 'Qzify support <support@qzify.com>',
+        from: process.env.USER_EMAIL,
         to: option.email,
         subject: option.subject,
         text: option.message,
+        trackingSettings: {
+            clickTracking: { enable: false, enableText: false },
+        }
     }
     await transporter.sendMail(mailOptions);
 }

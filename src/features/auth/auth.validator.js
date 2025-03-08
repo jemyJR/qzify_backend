@@ -27,12 +27,9 @@ const authValidator = {
     ],
     resetPassword: [
         check('newPassword').isLength({ min: 6 }).withMessage('New password must be at least 6 characters long'),
-        body('passwordConfirmation').custom((value, { req }) => {
-            if (value !== req.body.newPassword) {
-                throw new RuntimeError('Validation error', 'Password confirmation does not match new password', 400);
-            }
-            return true;
-        }),
+        body('passwordConfirmation')
+            .custom((value, { req }) => value === req.body.newPassword)
+            .withMessage('Password confirmation does not match new password'),
     ]
 };
 
