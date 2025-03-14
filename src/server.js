@@ -1,6 +1,6 @@
-const {app} = require('./app');
+const { app } = require("./app");
 
-const {dbConnect} = require('./shared/config/dbConnect');
+const { dbConnect } = require('./shared/config/dbConnect');
 const mongoose = require('mongoose');
 
 const DEFAULT_PORT = 3000;

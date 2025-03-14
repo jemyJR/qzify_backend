@@ -22,7 +22,7 @@ loadEnv();
 app.use(cors(corsOptions));
 app.use(cookieParser());
 
-app.use(express.json( {limit: '20kb'} ));
+app.use(express.json({ limit: '20kb' }));
 app.use(express.urlencoded({ extended: true }));
 
 

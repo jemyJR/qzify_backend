@@ -5,7 +5,6 @@ const { questionsRouter } = require('./features/questions/questions.routes');
 // const { attemptsRouter } = require('./features/attempts/attempts.routes');
 
 const configureRoutes = (app) => {
-    
     app.use('/users', userRouter);
     app.use('/auth', authRouter);
     app.use('/questions', questionsRouter);

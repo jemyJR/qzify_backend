@@ -1,47 +1,38 @@
-const User = require('./user.model');
-const bcrypt = require('bcrypt');
-const { ResourceNotFoundError, RuntimeError } = require('../../shared/utils/errorTypes');
+const UserRepo = require('./user.repo');
+const { ResourceNotFoundError } = require('../../shared/utils/errorTypes');
 
-exports.getUsers = async function() {
-    const users = await User.find().select('-password');
+exports.getUsers = async function () {
+    const users = await UserRepo.findAll();
     return users;
 };
 
-exports.getUserById = async function(id) {
-    const user = await User.findById(id).select('-password');
+exports.getUserByEmail = async (email) => {
+    return await UserRepo.findOne({ email });
+}
+exports.getUserByprop = async (prop) => {
+    return await UserRepo.findOne(prop);
+}
+exports.getUserById = async function (id) {
+    const user = await UserRepo.findById(id);
     if (!user) {
         throw new ResourceNotFoundError('User', 'id', id, 'User not found');
     }
     return user;
 };
 
-exports.createUser = async function(newUser) {
-    const existingUser = await User.findOne({ email: newUser.email });
-    if (existingUser) {
-        throw new RuntimeError('User already exists', 'User with this email already exists', 400);
-    }
-    const hashedPassword = await bcrypt.hash(newUser.password, 10);
-    newUser.password = hashedPassword;
-    const user = new User(newUser);
-    await user.save();
-    const { password, ...userWithoutPassword } = user.toObject();
-    return userWithoutPassword;
-};
+exports.createUser = async (user) => {
+    return await UserRepo.save(user);
+}
 
-exports.updateUser = async function(id, updatedUser) {
+exports.updateUser = async function (id, updatedUser) {
     if (updatedUser.hasOwnProperty('role')) {
         delete updatedUser.role;
     }
-    
-    const user = await User.findByIdAndUpdate(id, updatedUser, { new: true }).select('-password');
-    if (!user) {
-        throw new ResourceNotFoundError('User', 'id', id, 'User not found');
-    }
-    return user;
+    return await UserRepo.save({ id, ...updatedUser });
 };
 
-exports.deleteUser = async function(id) {
-    const user = await User.findByIdAndDelete(id);
+exports.deleteUser = async function (id) {
+    const user = await UserRepo.deleteById(id);
     if (!user) {
         throw new ResourceNotFoundError('User', 'id', id, 'User not found');
     }
