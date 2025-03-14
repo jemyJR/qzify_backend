@@ -1,98 +1,133 @@
 const QuestionService = require('./questions.service');
-const sendErrorResponse = require('../../shared/utils/errorHandler');
 
-
-class QuestionsController {
-    static getQuestions(req, res) {
-        try{
-            const quizId = parseInt(req.params.quizId);
-            const questions = QuestionService.getQuestions(quizId);
-            res.json(questions);
-        } catch (err) {
-            console.error(err);
-            if (err.message === 'Quiz not found') {
-                sendErrorResponse(res, 404, err.message);
-                return;
-            }
-            res.status(500).send('Internal Server Error');
-        }
+exports.getQuestions = async function(req, res, next) {
+    try {
+        const questions = await QuestionService.getQuestions();
+        res.json({
+            code: 200,
+            count: questions.length,
+            questions,
+        });
+    } catch (err) {
+        next(err);
     }
+};
 
-    static getQuestion(req, res) {
-        try {
-            const quizId = parseInt(req.params.quizId);
-            const questionId = parseInt(req.params.questionId);
-            const question = QuestionService.getQuestion(quizId, questionId);
-            res.json(question);
-        } catch (err) {
-            console.error(err);
-            if (err.message === 'Quiz not found') {
-                sendErrorResponse(res, 404, err.message);
-                return;
-            }
-            res.status(500).send('Internal Server Error');
-        }
+exports.getQuestion = async function(req, res, next) {
+    try {
+        const id = req.params.id;
+        const question = await QuestionService.getQuestionById(id);
+        res.json({
+            code: 200,
+            question,
+        });
+    } catch (err) {
+        next(err);
     }
+};
 
-    static createQuestion(req, res) {
-        try {
-            const quizId = parseInt(req.params.quizId);
-            const newQuestion = QuestionService.createQuestion(quizId, req.body);
-            res.json({
-                code: 201,
-                message: 'Question created successfully',
-                question: newQuestion
-            });
-        } catch (err) {
-            console.error(err);
-            if (err.message === 'Quiz not found' || err.message === 'Question already exists') {
-                sendErrorResponse(res, 404, err.message);
-                return;
-            }
-
-            res.status(500).send('Internal Server Error');
-        }
+exports.createQuestion = async function(req, res, next) {
+    try {
+        const questionData = req.body;
+        const question = await QuestionService.createQuestion(questionData);
+        res.json({
+            code: 201,
+            message: 'Question created successfully',
+            question,
+        });
+    } catch (err) {
+        next(err);
     }
+};
 
-    static updateQuestion(req, res) {
-        try {
-            const quizId = parseInt(req.params.quizId);
-            const questionId = parseInt(req.params.questionId);
-            const updatedQuestion = QuestionService.updateQuestion(quizId, questionId, req.body);
-            res.json({
-                code: 200,
-                message: 'Question updated successfully',
-                question: updatedQuestion
-            });
-        } catch (err) {
-            console.error(err);
-            if (err.message === 'Quiz not found' || err.message === 'Question not found' || err.message === 'Question already exists') {
-                sendErrorResponse(res, 404, err.message);
-                return;
-            }
-            res.status(500).send('Internal Server Error');
-        }
+exports.createBulkQuestions = async function(req, res, next) {
+    try {
+        const questions = req.body;
+        const createdQuestions = await QuestionService.createBulkQuestions(questions);
+        res.json({
+            code: 201,
+            message: 'Questions created successfully',
+            count: createdQuestions.length,
+            questions: createdQuestions,
+        });
+    } catch (err) {
+        next(err);
     }
+}
 
-    static deleteQuestion(req, res) {
-        try {
-            const quizId = parseInt(req.params.quizId);
-            const questionId = parseInt(req.params.questionId);
-            const questions = QuestionService.deleteQuestion(quizId, questionId);
-            res.json({
-                code: 200,
-                message: 'Question deleted successfully',
-            });
-        } catch (err) {
-            console.error(err);
-            if (err.message === 'Quiz not found' || err.message === 'Question not found') {
-                sendErrorResponse(res, 404, err.message);
-                return;
-            }
-            res.status(500).send('Internal Server Error');
-        }
+exports.updateQuestion = async function(req, res, next) {
+    try {
+        const id = req.params.id;
+        const updatedQuestion = req.body;
+        const question = await QuestionService.updateQuestion(id, updatedQuestion);
+        res.json({
+            code: 200,
+            message: 'Question updated successfully',
+            question,
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
+exports.deleteQuestion = async function(req, res, next) {
+    try {
+        const id = req.params.id;
+        const message = await QuestionService.deleteQuestion(id);
+        res.json({
+            code: 200,
+            message,
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.getQuestionsByCategory = async function(req, res, next) {
+    try {
+        const category = req.params.category;
+        const questions = await QuestionService.getQuestionsByCategory(category);
+        res.json({
+            code: 200,
+            count: questions.length,
+            questions,
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
+exports.getAllCategories = async function(req, res, next) {
+    try {
+        const categories = await QuestionService.getAllCategories();
+        res.json({
+            code : 200,
+            count: categories.length,
+            categories,
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
+exports.getRandomQuiz = async function(req, res, next) {
+    try {
+        const { difficulties, categories, count } = req.query;
+        const difficultiesArray = difficulties ? difficulties.split(',') : ['easy'];
+        const categoriesArray = categories ? categories.split(',') : [];
+        const numberOfQuestions = count ? parseInt(count) : 10;
+        const questions = await QuestionService.getRandomQuiz({
+            difficulties: difficultiesArray,
+            categories: categoriesArray,
+            count: numberOfQuestions,
+        });
+        res.json({
+            code: 200,
+            count: questions.length,
+            questions,
+        });
+    } catch (err) {
+        next(err);
     }
 
 }
-
-module.exports = QuestionsController;
