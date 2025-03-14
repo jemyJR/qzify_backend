@@ -1,7 +1,7 @@
 const hpp = require('hpp');
 const helmet = require('helmet');
 const { rateLimiter } = require('./rateLimiter.middleware');
-const xss = require('xss-clean');
+const { conditionalXssMiddleware } = require('./xssMiddleware');
 const sanitize = require('express-mongo-sanitize');
 
 const securityMiddleware = (app) => {
@@ -12,7 +12,7 @@ const securityMiddleware = (app) => {
     app.use(hpp());
 
     // Prevent XSS attacks
-    app.use(xss());
+    app.use(conditionalXssMiddleware());
 
     // Rate limiting
     app.use(rateLimiter);
