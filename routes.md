@@ -30,7 +30,6 @@
 - **POST** `/attempts/start/`                                -- Start a quiz (copy quiz snapshot & store user answers)
 - **POST** `/attempts/:id/submit`                            -- Submit answers and calculate score
 - **GET** `/attempts/:id`                                    -- Get details of a quiz attempt(answers/score)
-- **GET** `/users/userId/attempts`                           -- Get all past exams for a user
-- **GET** `/users/userId/attempts/:id`                       -- Get a specific exam attempt
-- **GET** `/attempts/:id/score`                              -- Get the score of a specific exam attempt
-- ***POST** `quizzes/generated`                              -- Create customized quiz from preferable categories
+- **GET** `/users/:id/attempts`                              -- Get all past exams for a user
+<!-- - **GET** `/users/userId/attempts/:id`                       -- Get a specific exam attempt -->
+<!-- - **GET** `/attempts/:id/score`                              -- Get the score of a specific exam attempt -->

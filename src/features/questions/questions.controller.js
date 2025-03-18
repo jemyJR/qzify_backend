@@ -1,6 +1,6 @@
 const QuestionService = require('./questions.service');
 
-exports.getQuestions = async function(req, res, next) {
+exports.getQuestions = async function (req, res, next) {
     try {
         const questions = await QuestionService.getQuestions();
         res.json({
@@ -13,7 +13,7 @@ exports.getQuestions = async function(req, res, next) {
     }
 };
 
-exports.getQuestion = async function(req, res, next) {
+exports.getQuestion = async function (req, res, next) {
     try {
         const id = req.params.id;
         const question = await QuestionService.getQuestionById(id);
@@ -26,7 +26,7 @@ exports.getQuestion = async function(req, res, next) {
     }
 };
 
-exports.createQuestion = async function(req, res, next) {
+exports.createQuestion = async function (req, res, next) {
     try {
         const questionData = req.body;
         const question = await QuestionService.createQuestion(questionData);
@@ -40,7 +40,7 @@ exports.createQuestion = async function(req, res, next) {
     }
 };
 
-exports.createBulkQuestions = async function(req, res, next) {
+exports.createBulkQuestions = async function (req, res, next) {
     try {
         const questions = req.body;
         const createdQuestions = await QuestionService.createBulkQuestions(questions);
@@ -55,7 +55,7 @@ exports.createBulkQuestions = async function(req, res, next) {
     }
 }
 
-exports.updateQuestion = async function(req, res, next) {
+exports.updateQuestion = async function (req, res, next) {
     try {
         const id = req.params.id;
         const updatedQuestion = req.body;
@@ -70,7 +70,7 @@ exports.updateQuestion = async function(req, res, next) {
     }
 }
 
-exports.deleteQuestion = async function(req, res, next) {
+exports.deleteQuestion = async function (req, res, next) {
     try {
         const id = req.params.id;
         const message = await QuestionService.deleteQuestion(id);
@@ -83,7 +83,7 @@ exports.deleteQuestion = async function(req, res, next) {
     }
 };
 
-exports.getQuestionsByCategory = async function(req, res, next) {
+exports.getQuestionsByCategory = async function (req, res, next) {
     try {
         const category = req.params.category;
         const questions = await QuestionService.getQuestionsByCategory(category);
@@ -97,11 +97,11 @@ exports.getQuestionsByCategory = async function(req, res, next) {
     }
 }
 
-exports.getAllCategories = async function(req, res, next) {
+exports.getAllCategories = async function (req, res, next) {
     try {
         const categories = await QuestionService.getAllCategories();
         res.json({
-            code : 200,
+            code: 200,
             count: categories.length,
             categories,
         });
@@ -110,7 +110,7 @@ exports.getAllCategories = async function(req, res, next) {
     }
 }
 
-exports.getRandomQuiz = async function(req, res, next) {
+exports.getRandomQuiz = async function (req, res, next) {
     try {
         const { difficulties, categories, count } = req.query;
         const difficultiesArray = difficulties ? difficulties.split(',') : ['easy'];
