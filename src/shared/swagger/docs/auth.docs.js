@@ -57,7 +57,41 @@
  *                   example: 201
  *                 message:
  *                   type: string
- *                   example: User registered successfully
+ *                   example: User registered successfully              
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+
+/**
+ * @swagger
+ * /auth/verify-email/{token}:
+ *   get:
+ *     summary: Verify user email
+ *     description: Verifies a user's email using a unique verification token.
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The email verification token.
+ *     responses:
+ *       200:
+ *         description: Email verified successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: number
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Email verified successfully!
  *                 user:
  *                   $ref: '#/components/schemas/User'
  *       400:
@@ -123,6 +157,13 @@
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: cookie
+ *         name: refreshToken
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Refresh token stored in cookies.
  *     requestBody:
  *       required: false
  *       content:
@@ -168,6 +209,13 @@
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: cookie
+ *         name: refreshToken
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Refresh token stored in cookies.      
  *     requestBody:
  *       required: false
  *       content:
@@ -238,6 +286,93 @@
  *         $ref: '#/components/responses/BadRequest'
  *       401:
  *         $ref: '#/components/responses/Unauthorized'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+
+/**
+ * @swagger
+ * /auth/forgot-password:
+ *   post:
+ *     summary: Request password reset
+ *     description: Sends an email with a password reset link to the user.
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *     responses:
+ *       200:
+ *         description: Password reset email sent successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: number
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Password reset email sent successfully
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+
+/**
+ * @swagger
+ * /auth/reset-password/{token}:
+ *   patch:
+ *     summary: Reset user password
+ *     description: Allows a user to reset their password using a valid reset token.
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The password reset token sent via email.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - newPassword
+ *               - passwordConfirmation
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *                 example: newSecurePassword123
+ *               passwordConfirmation:
+ *                 type: string
+ *                 example: newSecurePassword123
+ *     responses:
+ *       200:
+ *         description: Password has been reset successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Password has been reset successfully!
+ *                 token:
+ *                   type: string
+ *                   example: "access.token.example"
+ *       400:
+ *         $ref: '#/components/responses/BadRequest'
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */

@@ -12,7 +12,6 @@ const attemptSchema = new Schema({
         chosenOptionIds: [{ type: ObjectId, ref: 'Option' }]
     }],
     score: { type: Number, default: 0 },
-    isFlagged: { type: Boolean, default: false }
 }, { timestamps: true });
 
 const Attempt = mongoose.model('Attempt', attemptSchema);

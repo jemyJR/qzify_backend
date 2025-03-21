@@ -22,7 +22,7 @@ exports.verifyEmail = async (req, res, next) => {
 
         res.json({
             message: "Email verified successfully!",
-            data: user
+            user
         });
     } catch (err) {
         next(err);
@@ -109,9 +109,6 @@ exports.forgotPassword = async (req, res, next) => {
 
         res.json({
             message: resetPasswordEmailsent,
-            email: req.body.email,
-            protocol: req.protocol,
-            host: req.get('host')
         })
     } catch (err) {
         next(err)
