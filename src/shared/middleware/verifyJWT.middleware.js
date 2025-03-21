@@ -24,8 +24,15 @@ const verifyJWT = async (req, res, next) => {
         req.user = decoded;
         next();
     } catch (err) {
-        next(err);
+
+        if (err instanceof jwt.TokenExpiredError) {
+            return next(new RuntimeError('Unauthorized', 'Token expired', 401));
+        } else if (err instanceof jwt.JsonWebTokenError) {
+            return next(new RuntimeError('Unauthorized', 'Invalid token', 401));
+        } else {
+            next(err);
+        }
     }
-}
+};
 
 module.exports = { verifyJWT };

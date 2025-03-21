@@ -8,7 +8,7 @@ const options = {
       title: "🎓 Qzify API",
       description: `REST API for Qzify Online Examination System
 
-🔒 **Authentication** • 👥 **User Management** • ❓ **Questions** 
+🔒 Authentication • 👥 User Management • ❓ Questions • 🎯 Quiz Attempts
 
 ---
 **Version**: 1.0.0
