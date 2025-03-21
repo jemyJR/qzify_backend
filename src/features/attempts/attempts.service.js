@@ -1,38 +1,38 @@
 const Attempt = require('./attempts.model');
 const QuestionService = require('../questions/questions.service');
-const { ResourceNotFoundError, RuntimeError } = require('../../shared/utils/errorTypes');
-const Question = require('../questions/question.model');
+const { ResourceNotFoundError } = require('../../shared/utils/errorTypes');
 
 const startQuiz = async (userId, difficulties, categories, count) => {
     const questions = await QuestionService.getRandomQuiz({ difficulties, categories, count });
-    const questionIds = questions.map(q => q._id);
-    const sanitizedQuestions = questions.map(({ correctOptionIds, options, ...question }) => ({
+    const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    const title = categories.length === 1
+        ? difficulties.length === 1
+            ? `${difficulties[0]} ${categories[0]} Quiz - ${date}`
+            : `${categories[0]} Quiz - ${date}`
+        : `General Quiz - ${date}`;
+    const sanitizedQuestions = questions.map(({ correctOptionIds, options, isMultiple, explanation, ...question }) => ({
         ...question,
         options: options.map(({ isCorrect, ...option }) => option)
     }));
     const attempt = new Attempt({
         userId,
-        questionIds,
+        questions,
+        title
     });
     await attempt.save();
-    return { attemptId: attempt._id, questions: sanitizedQuestions };
+    return { attemptId: attempt._id, attemptTitle: title, questions: sanitizedQuestions };
 }
 
 const submitQuiz = async (attemptId, answers) => {
     const attempt = await Attempt.findById(attemptId);
     if (!attempt)
         throw new ResourceNotFoundError('Attempt', 'id', attemptId, 'Attempt not found');
-    if (attempt.isCompleted)
-        throw new RuntimeError('Invalid operation', 'Attempt already submitted', 400);
-
-    const questions = await Question.find({ _id: { $in: attempt.questionIds } });
-    const questionMap = new Map(questions.map(q => [q._id.toString(), q]));
 
     let score = 0;
     let selectedAnswers = [];
 
     for (const { questionId, chosenOptionIds } of answers) {
-        const question = questionMap.get(questionId);
+        const question = await attempt.questions.find(q => q._id.toString() === questionId);
         if (question) {
             const correctOptionIds = question.correctOptionIds.map(id => id.toString());
             const isCorrect = chosenOptionIds.length === correctOptionIds.length && chosenOptionIds.every(id => correctOptionIds.includes(id));
@@ -41,9 +41,8 @@ const submitQuiz = async (attemptId, answers) => {
             selectedAnswers.push({ questionId, chosenOptionIds });
             attempt.selectedAnswers = selectedAnswers;
             attempt.score = score;
-            attempt.isCompleted = true;
             await attempt.save();
-            return { score, selectedAnswers };
+            return { score };
         } else {
             throw new ResourceNotFoundError('Question', 'id', questionId, 'Question not found');
         }
