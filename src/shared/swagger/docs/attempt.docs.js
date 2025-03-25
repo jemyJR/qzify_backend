@@ -17,7 +17,7 @@
 
 /**
  * @swagger
- * /start:
+ * /attempts/start:
  *   post:
  *     summary: Start a new quiz attempt
  *     tags: [Attempts]
@@ -28,15 +28,18 @@
  *         name: difficulties
  *         schema:
  *           type: string
+ *         description: Comma-separated difficulty levels (e.g., "easy,medium")
  *       - in: query
  *         name: categories
  *         required: true
  *         schema:
  *           type: string
+ *         description: Comma-separated list of quiz categories
  *       - in: query
  *         name: count
  *         schema:
  *           type: integer
+ *         description: Number of questions to include in the attempt
  *     responses:
  *       200:
  *         description: Successfully started a quiz attempt
@@ -47,23 +50,17 @@
  *               properties:
  *                 code:
  *                   type: integer
- *                 attemptId:
- *                   type: string
- *                 attemptTitle:
- *                   type: string
- *                 questions:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Question'
+ *                 attempt:
+ *                   $ref: '#/components/schemas/Attempt'
  *       401:
  *         $ref: '#/components/responses/Unauthorized'
  */
 
 /**
  * @swagger
- * /{id}/submit:
- *   post:
- *     summary: Submit answers for a quiz attempt
+ * /attempts/{id}/continue:
+ *   get:
+ *     summary: Continue an in-progress quiz attempt
  *     tags: [Attempts]
  *     security:
  *       - BearerAuth: []
@@ -71,19 +68,12 @@
  *       - name: id
  *         in: path
  *         required: true
+ *         description: ID of the quiz attempt to continue
  *         schema:
  *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             additionalProperties:
- *               type: string
  *     responses:
  *       200:
- *         description: Successfully submitted the quiz
+ *         description: Successfully retrieved the in-progress quiz attempt
  *         content:
  *           application/json:
  *             schema:
@@ -91,15 +81,113 @@
  *               properties:
  *                 code:
  *                   type: integer
- *                 score:
- *                   type: integer
+ *                 attempt:
+ *                   $ref: '#/components/schemas/Attempt'
  *       401:
  *         $ref: '#/components/responses/Unauthorized'
  */
 
 /**
  * @swagger
- * /{id}:
+ * /attempts/{id}:
+ *   put:
+ *     summary: Update a quiz attempt (e.g., flag questions or save chosen answers)
+ *     tags: [Attempts]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID of the quiz attempt to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       description: Array of update objects for questions in the attempt
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               type: object
+ *               properties:
+ *                 questionId:
+ *                   type: string
+ *                 chosenOptionIds:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 isFlagged:
+ *                   type: boolean
+ *     responses:
+ *       200:
+ *         description: Successfully updated the quiz attempt
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                 attempt:
+ *                   $ref: '#/components/schemas/Attempt'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ */
+
+/**
+ * @swagger
+ * /attempts/{id}/submit:
+ *   post:
+ *     summary: Submit answers for a quiz attempt and complete it
+ *     tags: [Attempts]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID of the quiz attempt to submit
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       description: Array of update objects for questions in the attempt (similar to update)
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               type: object
+ *               properties:
+ *                 questionId:
+ *                   type: string
+ *                 chosenOptionIds:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 isFlagged:
+ *                   type: boolean
+ *     responses:
+ *       200:
+ *         description: Successfully submitted the quiz attempt
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 code:
+ *                   type: integer
+ *                 attempt:
+ *                   $ref: '#/components/schemas/Attempt'
+ *       401:
+ *         $ref: '#/components/responses/Unauthorized'
+ */
+
+/**
+ * @swagger
+ * /attempts/{id}:
  *   get:
  *     summary: Get details of a quiz attempt
  *     tags: [Attempts]
@@ -123,29 +211,22 @@
  *                 code:
  *                   type: integer
  *                 attempt:
- *                     $ref: '#/components/schemas/Attempt'
+ *                   $ref: '#/components/schemas/Attempt'
  *       401:
  *         $ref: '#/components/responses/Unauthorized'
  */
 
 /**
  * @swagger
- * /user/{id}:
+ * /attempts:
  *   get:
- *     summary: Get all quiz attempts of a user
+ *     summary: Get all quiz attempts of the authenticated user
  *     tags: [Attempts]
  *     security:
  *       - BearerAuth: []
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         description: ID of the user
- *         schema:
- *           type: string
  *     responses:
  *       200:
- *         description: List of quiz attempts
+ *         description: List of quiz attempts for the user
  *         content:
  *           application/json:
  *             schema:
