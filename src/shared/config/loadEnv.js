@@ -1,7 +1,7 @@
-const process = require('process');
+const dotenv = require('dotenv');
 
 const loadEnv = () => {
-    process.loadEnvFile();
+    dotenv.config();
 }
 
 module.exports = { loadEnv };
