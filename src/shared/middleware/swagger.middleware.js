@@ -27,7 +27,7 @@ Find the source code and contribute to the project on GitHub:  [Qzify Backend Gi
 
 ### 📞 **Contact**
 - **Mohamed Gamal**: [LinkedIn](https://www.linkedin.com/in/jemy25/) | [Email](mailto:mohamedgamalwork25@gmail.com)
-- **Esraa Gamal**: [LinkedIn](https://www.linkedin.com) | [Email](mailto:esraakhalifa122@gmail.com)
+- **Esraa Gamal**: [LinkedIn](https://www.linkedin.com/in/esraakhalifadev/) | [Email](mailto:esraakhalifa122@gmail.com)
 `,
       version: "1.0.0"
     },
