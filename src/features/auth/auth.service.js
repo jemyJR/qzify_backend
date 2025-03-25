@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require("crypto");
 const userService = require('../users/users.service');
-const userUtlis = require('../users/user.utils');
+const { removeSensitiveInfo } = require('../users/user.utils');
 const sendEmail = require('../../shared/utils/email');
 const { ResourceNotFoundError, RuntimeError } = require('../../shared/utils/errorTypes');
 
@@ -55,10 +55,6 @@ const logoutAllDevices = async (id) => {
     console.log('You have been logged out from all devices');
 }
 
-const verifyAccessToken = function (token) {
-    return jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-};
-
 const verifyRefreshToken = function (token) {
     return jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
 };
@@ -99,7 +95,7 @@ exports.verifyEmail = async (token) => {
     user.verificationToken = null;
     user.verificationTokenExpire = null;
     await userService.updateUser(user.id, user);
-    return userUtlis.removePassword(user);
+    return removeSensitiveInfo(user);
 };
 
 exports.loginUser = async function (email, password) {
@@ -114,11 +110,11 @@ exports.loginUser = async function (email, password) {
     if (!isPasswordMatch) {
         throw new RuntimeError('Invalid credentials', 'Invalid email or password', 400);
     }
-    const userWithoutPassword = userUtlis.removePassword(user);
+    const userWithoutSensitiveInfo = removeSensitiveInfo(user);
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
     return {
-        user: userWithoutPassword,
+        user: userWithoutSensitiveInfo,
         accessToken,
         refreshToken,
     };
