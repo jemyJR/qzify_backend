@@ -1,5 +1,7 @@
-const { check } = require('express-validator');
-const { changePassword } = require('./auth.service');
+const { check, body } = require('express-validator');
+const { changePassword, forgotPassword, resetPassword } = require('./auth.service');
+const { RuntimeError } = require('../../shared/utils/errorTypes');
+
 const authValidator = {
     login: [
         check('email').isEmail().withMessage('Email must be a valid email'),
@@ -20,6 +22,15 @@ const authValidator = {
         check('oldPassword').isLength({ min: 6 }).withMessage('Old password must be at least 6 characters long'),
         check('newPassword').isLength({ min: 6 }).withMessage('New password must be at least 6 characters long'),
     ],
+    forgotPassword: [
+        check('email').isEmail().withMessage('Email must be a valid email'),
+    ],
+    resetPassword: [
+        check('newPassword').isLength({ min: 6 }).withMessage('New password must be at least 6 characters long'),
+        body('passwordConfirmation')
+            .custom((value, { req }) => value === req.body.newPassword)
+            .withMessage('Password confirmation does not match new password'),
+    ]
 };
 
 module.exports = { authValidator };

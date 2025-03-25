@@ -1,21 +1,32 @@
 const express = require('express');
 const QuestionsController = require('./questions.controller');
-const { optionsRouter } = require('../options/options.routes'); 
+const { validate } = require('../../shared/utils/validate');
+const { questionValidator } = require('./question.validator');
+const { verifyJWT } = require('../../shared/middleware/verifyJWT.middleware');
+const { requireAdmin } = require('../../shared/middleware/requireAdmin.middleware');
 
+const questionsRouter = express.Router();
 
-const questionsRouter = express.Router({ mergeParams: true });
+questionsRouter.use(verifyJWT);
+
+questionsRouter.get('/category', QuestionsController.getAllCategories);
+
+questionsRouter.use(requireAdmin);
+
+questionsRouter.get('/category/:category', QuestionsController.getQuestionsByCategory);
+
+questionsRouter.post('/bulk', QuestionsController.createBulkQuestions);
+
+questionsRouter.get('/random', QuestionsController.getRandomQuiz);
 
 questionsRouter.get('/', QuestionsController.getQuestions);
 
-questionsRouter.get('/:questionId', QuestionsController.getQuestion);
+questionsRouter.get('/:id', QuestionsController.getQuestion);
 
-questionsRouter.post('/', QuestionsController.createQuestion);
+questionsRouter.post('/', validate(questionValidator.createQuestion), QuestionsController.createQuestion);
 
-questionsRouter.put('/:questionId', QuestionsController.updateQuestion);
+questionsRouter.put('/:id', validate(questionValidator.createQuestion), QuestionsController.updateQuestion);
 
-questionsRouter.delete('/:questionId', QuestionsController.deleteQuestion);
-
-questionsRouter.use('/:questionId/options', optionsRouter);
-
+questionsRouter.delete('/:id', QuestionsController.deleteQuestion);
 
 module.exports = { questionsRouter };

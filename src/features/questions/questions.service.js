@@ -1,80 +1,156 @@
-const { readData, writeData } = require('../quizzes/quizzes.repository');
+const Question = require('./question.model');
+const { ResourceNotFoundError, RuntimeError } = require('../../shared/utils/errorTypes');
+const { shuffleArray } = require('../../shared/utils/helpers');
 
-class QuestionService {
-    static getQuestions(quizId) {
-        const quizzes = readData();
-        const quiz = quizzes.find(quiz => quiz.id === quizId);
-        if (!quiz) {
-            throw new Error('Quiz not found');
-        }
-        return quiz.questions;
+exports.getQuestions = async function () {
+    const questions = await Question.find();
+    return questions;
+};
+
+exports.getQuestionById = async function (id) {
+    const question = await Question.findById(id)
+    if (!question) {
+        throw new ResourceNotFoundError('Question', 'id', id, 'Question not found');
+    }
+    return question;
+};
+
+exports.createQuestion = async function (newQuestion) {
+    if (newQuestion.options.length < 2) {
+        throw new RuntimeError('Invalid question', 'Question must have at least two options', 400);
     }
 
-    static getQuestion(quizId, questionId) {
-        const quizzes = readData();
-        const quiz = quizzes.find(quiz => quiz.id === quizId);
-        if (!quiz) {
-            throw new Error('Quiz not found');
-        }
-        const question = quiz.questions.find(question => question.id === questionId);
-        if (!question) {
-            throw new Error('Question not found');
-        }
-        return question;
+    const hasCorrectAnswer = newQuestion.options.some(option => option.isCorrect);
+    if (!hasCorrectAnswer) {
+        throw new RuntimeError('Invalid question', 'Question must have at least one correct option', 400);
     }
 
-    static createQuestion(quizId, newQuestion) {
-        const quizzes = readData();
-        const quiz = quizzes.find(quiz => quiz.id === quizId);
-        if (!quiz) {
-            throw new Error('Quiz not found');
-        }
-        const exists = quiz.questions.some(question => question.question === newQuestion.question);
-        if (exists) {
-            throw new Error('Question already exists');
-        }
-        const lastQuestion = quiz.questions[quiz.questions.length - 1];
-        newQuestion.id = lastQuestion.id + 1;
-        quiz.questions.push(newQuestion);
-        writeData(quizzes);
-        return newQuestion;
-    }
+    const question = new Question(newQuestion);
+    await question.save();
+    return question;
+};
 
-    static updateQuestion(quizId, questionId, updatedQuestion) {
-        const quizzes = readData();
-        const quiz = quizzes.find(quiz => quiz.id === quizId);
-        if (!quiz) {
-            throw new Error('Quiz not found');
-        }
-        const index = quiz.questions.findIndex(question => question.id === questionId);
-        if (index === -1) {
-            throw new Error('Question not found');
-        }
-        const exists = quiz.questions.some(question => question.question === updatedQuestion.question);
-        if (exists) {
-            throw new Error('Question already exists');
-        }
-        updatedQuestion.id = questionId;
-        quiz.questions[index] = updatedQuestion;
-        writeData(quizzes);
-        return updatedQuestion;
-    }
-
-    static deleteQuestion(quizId, questionId) {
-        const quizzes = readData();
-        const quiz = quizzes.find(quiz => quiz.id === quizId);
-        if (!quiz) {
-            throw new Error('Quiz not found');
-        }
-        const index = quiz.questions.findIndex(question => question.id === questionId);
-        if (index === -1) {
-            throw new Error('Question not found');
-        }
-        quiz.questions.splice(index, 1);
-        writeData(quizzes);
-        return quiz.questions;
-    }
-
+exports.createBulkQuestions = async function (questions) {
+    const createdQuestions = await Promise.all(
+        questions.map(
+            question => this.createQuestion(question)
+        )
+    );
+    return createdQuestions;
 }
 
-module.exports = QuestionService;
+
+exports.updateQuestion = async function (id, updatedQuestion) {
+    if (updatedQuestion.options.length < 2) {
+        throw new RuntimeError('Invalid question', 'Question must have at least two options', 400);
+    }
+
+    const hasCorrectAnswer = updatedQuestion.options.some(option => option.isCorrect);
+    if (!hasCorrectAnswer) {
+        throw new RuntimeError('Invalid question', 'Question must have at least one correct option', 400);
+    }
+
+    const question = await Question.findByIdAndUpdate(id, updatedQuestion, { new: true });
+    if (!question) {
+        throw new ResourceNotFoundError('Question', 'id', id, 'Question not found');
+    }
+    return question;
+}
+
+exports.deleteQuestion = async function (id) {
+    const question = await Question.findByIdAndDelete(id);
+    if (!question) {
+        throw new ResourceNotFoundError('Question', 'id', id, 'Question not found');
+    }
+    return 'Question deleted successfully';
+}
+
+
+exports.getQuestionsByCategory = async function (category) {
+    const questions = await Question.find({ category });
+    if (questions.length === 0) {
+        throw new ResourceNotFoundError('Question', 'category', category, 'No questions found');
+    }
+    return questions;
+}
+exports.getAllCategories = async function () {
+    const categories = await Question.distinct('category');
+    return categories;
+}
+
+
+// exports.getRandomQuiz= async function (categories, difficulties, numberOfQuestions) {
+//     const questions = await Question.aggregate([
+//         { $match: { category: { $in: categories } } },
+//         { $match: { difficulty: { $in: difficulties } } },
+//         { $sample: { size: numberOfQuestions } }
+//     ]);
+//     if (questions.length === 0) {
+//         throw new ResourceNotFoundError('Question', 'category', categories, 'No questions found');
+//     }
+//     return questions;
+// }
+
+
+
+exports.getRandomQuiz = async function ({ difficulties , categories, count }) {
+    const filter = {};
+
+    if (categories && categories.length > 0) {
+        filter.category = { $in: categories };
+    } else {
+        throw new RuntimeError('Invalid request', 'At least one category is required', 400);
+    }
+
+    if (difficulties && difficulties.length > 0) {
+        filter.difficulty = { $in: difficulties };
+    } else {
+        throw new RuntimeError('Invalid request', 'At least one difficulty level is required', 400);
+    }
+
+    const totalAvailableQuestions = await Question.countDocuments(filter);
+    if (totalAvailableQuestions < count) {
+        throw new RuntimeError('Invalid request', 'Not enough questions available for the specified filters', 400);
+    }
+
+    let questions = [];
+
+    const allCombos = [];
+    for (const category of categories) {
+        for (const difficulty of difficulties) {
+            allCombos.push({ category, difficulty });
+        }
+    }
+
+    const questionsPerCombo = Math.floor(count / allCombos.length);
+    let remainingQuestions = count % allCombos.length;
+
+    for (const combo of allCombos) {
+        const comboFilter = { ...filter, ...combo };
+        let numberOfQuestions = questionsPerCombo;
+        if (remainingQuestions > 0) {
+            numberOfQuestions++;
+            remainingQuestions--;
+        }
+        const comboQuestions = await Question.aggregate([
+            { $match: comboFilter },
+            { $sample: { size: numberOfQuestions } }
+        ]);
+        questions.push(...comboQuestions);
+    }
+
+    if (questions.length < count) {
+        const alreadyIncludedIds = questions.map(question => question._id);
+        const extraQuestionsNeeded = count - questions.length;
+        const extraQuestions = await Question.aggregate([
+            { $match: { ...filter, _id: { $nin: alreadyIncludedIds } } },
+            { $sample: { size: extraQuestionsNeeded } }
+        ]);
+        questions.push(...extraQuestions);
+    }
+    else if (questions.length > count) {
+        questions = shuffleArray(questions).slice(0, count);
+    }
+    questions = shuffleArray(questions);
+    return questions;
+}

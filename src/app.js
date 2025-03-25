@@ -12,6 +12,7 @@ const { rateLimiter } = require('./shared/middleware/rateLimiter.middleware');
 const { securityMiddleware } = require('./shared/middleware/security.middleware');
 
 const { configureRoutes } = require('./routes');
+const { initCronJobs } = require('./shared/utils/cron');
 
 const app = express();
 
@@ -22,7 +23,7 @@ loadEnv();
 app.use(cors(corsOptions));
 app.use(cookieParser());
 
-app.use(express.json( {limit: '20kb'} ));
+app.use(express.json({ limit: '20kb' }));
 app.use(express.urlencoded({ extended: true }));
 
 
@@ -36,6 +37,7 @@ swaggerMiddleware(app);
 
 app.use(globalValidationMiddleware);
 
+initCronJobs(); 
 
 configureRoutes(app);
 

@@ -1,32 +1,46 @@
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const dotenv = require('dotenv');
+dotenv.config();
+
+const isProduction = process.env.NODE_ENV === 'production';
+const defaultServer = isProduction
+  ? 'https://onlineexamsystem-staging.up.railway.app'
+  : 'http://localhost:3000';
 
 const options = {
   definition: {
     openapi: "3.0.0",
     info: {
       title: "🎓 Qzify API",
-      description: `REST API for Qzify Online Examination System
+      description: `🎓 **Qzify API Documentation**
 
-🔒 **Authentication** • 👥 **User Management**
+### ✨ **Features**
+🔑 Authentication · 👥 User Management · ❓ Questions Management · 📝 Quiz Attempts · 🛡️ Security
 
 ---
-**Version**: 1.0.0
 
-**Contact**:
-- **Mohamed Gamal** : [LinkedIn](https://www.linkedin.com/in/jemy25/) | [Email](mailto:mohamedgamalwork25@gmail.com)
-- **Esraa Gamal** : [LinkedIn]() | [Email](mailto:)
+### 📚 **Repository**
+Find the source code and contribute to the project on GitHub:  [Qzify Backend GitHub Repository](https://github.com/jemyJR/qzify_backend)
+
+---
+
+### 📞 **Contact**
+- **Mohamed Gamal**: [LinkedIn](https://www.linkedin.com/in/jemy25/) | [Email](mailto:mohamedgamalwork25@gmail.com)
+- **Esraa Gamal**: [LinkedIn](https://www.linkedin.com/in/esraakhalifadev/) | [Email](mailto:esraakhalifa122@gmail.com)
 `,
       version: "1.0.0"
     },
     servers: [
       {
-        "url": "http://localhost:3000",
-        "description": "Local Development Server"
+        url: defaultServer,
+        description: isProduction
+          ? "Production Server"
+          : "Local Development Server"
       },
       {
-        "url": "https://onlineexamsystem-staging.up.railway.app",
-        "description": "Staging Server"
+        url: "https://onlineexamsystem-staging.up.railway.app",
+        description: "Staging Server"
       }
     ],
     components: {

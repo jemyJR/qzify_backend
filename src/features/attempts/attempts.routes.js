@@ -1,17 +1,16 @@
 const express = require('express');
-const AttemptsController = require('./attempts.controller');
+const AttemptsConroller = require('./attempts.controller');
+const { verifyJWT } = require('../../shared/middleware/verifyJWT.middleware');
 
 const attemptsRouter = express.Router();
 
-attemptsRouter.get('/', AttemptsController.getAttempts);
+attemptsRouter.use(verifyJWT);
 
-attemptsRouter.get('/:id', AttemptsController.getAttempt);
-
-attemptsRouter.post('/', AttemptsController.createAttempt);
-
-attemptsRouter.put('/:id', AttemptsController.updateAttempt);
-
-attemptsRouter.delete('/:id', AttemptsController.deleteAttempt);
-
+attemptsRouter.get('/', AttemptsConroller.getAllAttemptsByUser);
+attemptsRouter.post('/start', AttemptsConroller.startQuiz);
+attemptsRouter.get('/:id/continue', AttemptsConroller.continueAttempt);
+attemptsRouter.patch('/:id', AttemptsConroller.updateAttempt);
+attemptsRouter.post('/:id/submit', AttemptsConroller.submitQuiz);
+attemptsRouter.get('/:id', AttemptsConroller.getAttemptById);
 
 module.exports = { attemptsRouter };
