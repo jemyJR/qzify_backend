@@ -1,9 +1,10 @@
 const UserRepo = require('./user.repo');
 const { ResourceNotFoundError } = require('../../shared/utils/errorTypes');
+const { removeSensitiveInfo } = require('./user.utils');
 
 exports.getUsers = async function () {
     const users = await UserRepo.findAll();
-    return users;
+    return users.map(user => removeSensitiveInfo(user))
 };
 
 exports.getUserByEmail = async (email) => {

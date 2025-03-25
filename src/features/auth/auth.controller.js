@@ -126,7 +126,6 @@ exports.resetPassword = async (req, res, next) => {
         }
         res.json({
             message: "Password has been reset",
-            data: token
         });
     } catch (err) {
         next(err);
