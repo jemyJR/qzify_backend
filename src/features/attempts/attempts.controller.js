@@ -7,12 +7,38 @@ exports.startQuiz = async function (req, res, next) {
         const categoriesArray = categories ? categories.split(',') : [];
         const difficultiesArray = difficulties ? difficulties.split(',') : ['easy'];
         const numberOfQuestions = count ? parseInt(count) : 10;
-        const { attemptId, attemptTitle, questions } = await AttemptsService.startQuiz(userId, difficultiesArray, categoriesArray, numberOfQuestions);
+        const attempt = await AttemptsService.startQuiz(userId, difficultiesArray, categoriesArray, numberOfQuestions);
         res.json({
             code: 200,
-            attemptId,
-            attemptTitle,
-            questions,
+            attempt,
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
+exports.continueAttempt = async function (req, res, next) {
+    try {
+        const userId = req.user.id;
+        const attemptId = req.params.id;
+        const attempt = await AttemptsService.continueAttempt(userId, attemptId);
+        res.json({
+            code: 200,
+            attempt,
+        });
+    } catch (err) {
+        next(err);
+    }
+}
+
+exports.updateAttempt = async function (req, res, next) {
+    try {
+        const attemptId = req.params.id;
+        const updates = req.body;
+        const attempt = await AttemptsService.updateAttempt(attemptId, updates);
+        res.json({
+            code: 200,
+            attempt,
         });
     } catch (err) {
         next(err);
@@ -22,11 +48,11 @@ exports.startQuiz = async function (req, res, next) {
 exports.submitQuiz = async function (req, res, next) {
     try {
         const attemptId = req.params.id;
-        const answers = req.body;
-        const { score } = await AttemptsService.submitQuiz(attemptId, answers);
+        const updates = req.body;
+        const  attempt = await AttemptsService.submitQuiz(attemptId, updates);
         res.json({
             code: 200,
-            score,
+            attempt,
         });
     } catch (err) {
         next(err);
