@@ -1,5 +1,12 @@
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const dotenv = require('dotenv');
+dotenv.config();
+
+const isProduction = process.env.NODE_ENV === 'production';
+const defaultServer = isProduction
+  ? 'https://onlineexamsystem-staging.up.railway.app'
+  : 'http://localhost:3000';
 
 const options = {
   definition: {
@@ -9,7 +16,7 @@ const options = {
       description: `🎓 **Qzify API Documentation**
 
 ### ✨ **Features**
-🔑 **Authentication · 👥 User Management · ❓ Questions Management · 📝 Quiz Attempts · 🛡️ Security**
+🔑 Authentication · 👥 User Management · ❓ Questions Management · 📝 Quiz Attempts · 🛡️ Security
 
 ---
 
@@ -20,18 +27,20 @@ Find the source code and contribute to the project on GitHub:  [Qzify Backend Gi
 
 ### 📞 **Contact**
 - **Mohamed Gamal**: [LinkedIn](https://www.linkedin.com/in/jemy25/) | [Email](mailto:mohamedgamalwork25@gmail.com)
-- **Esraa Gamal**: [LinkedIn](https://www.linkedin.com) | [Email](mailto:)
+- **Esraa Gamal**: [LinkedIn](https://www.linkedin.com) | [Email](mailto:esraakhalifa122@gmail.com)
 `,
       version: "1.0.0"
     },
     servers: [
       {
-        "url": "http://localhost:3000",
-        "description": "Local Development Server"
+        url: defaultServer,
+        description: isProduction
+          ? "Production Server"
+          : "Local Development Server"
       },
       {
-        "url": "https://onlineexamsystem-staging.up.railway.app",
-        "description": "Staging Server"
+        url: "https://onlineexamsystem-staging.up.railway.app",
+        description: "Staging Server"
       }
     ],
     components: {
