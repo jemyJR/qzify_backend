@@ -57,7 +57,7 @@ Qzify is a robust and feature-rich online examination system designed specifical
 
 The project is deployed on **Railway**. You can access the live version of the application at:
 
-[https://onlineexamsystem-staging.up.railway.app](https://onlineexamsystem-staging.up.railway.app)
+[https://qzifybackend-production.up.railway.app](https://qzifybackend-production.up.railway.app)
 
 ---
 
@@ -106,7 +106,7 @@ npm start
 ## 📖 Usage
 
 ### **API Endpoints**
-Refer to the [API Documentation](#api-documentation) section for detailed information about available endpoints.
+Refer to the [API Documentation](https://qzifybackend-production.up.railway.app/api/docs/) section for detailed information about available endpoints.
 
 ### **Swagger Docs**
 Access the interactive API documentation at `/api/docs`.

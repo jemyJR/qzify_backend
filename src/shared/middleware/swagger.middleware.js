@@ -5,7 +5,7 @@ dotenv.config();
 
 const isProduction = process.env.NODE_ENV === 'production';
 const defaultServer = isProduction
-  ? 'https://onlineexamsystem-staging.up.railway.app'
+  ? 'https://qzifybackend-production.up.railway.app'
   : 'http://localhost:3000';
 
 const options = {
@@ -39,8 +39,8 @@ Find the source code and contribute to the project on GitHub:  [Qzify Backend Gi
           : "Local Development Server"
       },
       {
-        url: "https://onlineexamsystem-staging.up.railway.app",
-        description: "Staging Server"
+        url: "https://qzifybackend-production.up.railway.app",
+        description: "Production Server"
       }
     ],
     components: {
