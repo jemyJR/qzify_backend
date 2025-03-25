@@ -40,15 +40,6 @@
  *           description: Auto-populated array of option IDs marked as correct.
  *           items:
  *             type: string
- *         chosenOptionIds:
- *           type: array
- *           description: Array of option IDs chosen by the user.
- *           items:
- *             type: string
- *         isFlagged:
- *           type: boolean
- *           description: Indicates if the question has been flagged.
- *           default: false
  *         category:
  *           type: string
  *           description: The category of the question.

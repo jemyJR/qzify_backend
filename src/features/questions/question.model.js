@@ -40,17 +40,6 @@ const questionSchema = new Schema({
     required: true,
     default: []
   },
-  chosenOptionIds: {
-    type: [{ 
-        type: ObjectId,
-        ref: 'Option',
-    }],
-    default: [],
-  },
-  isFlagged: {
-    type: Boolean,
-    default: false,
-  },
   category: {
     type: String,
     required: true,
