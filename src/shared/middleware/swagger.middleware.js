@@ -6,16 +6,21 @@ const options = {
     openapi: "3.0.0",
     info: {
       title: "🎓 Qzify API",
-      description: `REST API for Qzify Online Examination System
+      description: `🎓 **Qzify API Documentation**
 
-🔒 Authentication • 👥 User Management • ❓ Questions • 🎯 Quiz Attempts
+### ✨ **Features**
+🔑 **Authentication · 👥 User Management · ❓ Questions Management · 📝 Quiz Attempts · 🛡️ Security**
 
 ---
-**Version**: 1.0.0
 
-**Contact**:
-- **Mohamed Gamal** : [LinkedIn](https://www.linkedin.com/in/jemy25/) | [Email](mailto:mohamedgamalwork25@gmail.com)
-- **Esraa Gamal** : [LinkedIn]() | [Email](mailto:)
+### 📚 **Repository**
+Find the source code and contribute to the project on GitHub:  [Qzify Backend GitHub Repository](https://github.com/jemyJR/qzify_backend)
+
+---
+
+### 📞 **Contact**
+- **Mohamed Gamal**: [LinkedIn](https://www.linkedin.com/in/jemy25/) | [Email](mailto:mohamedgamalwork25@gmail.com)
+- **Esraa Gamal**: [LinkedIn](https://www.linkedin.com) | [Email](mailto:)
 `,
       version: "1.0.0"
     },
