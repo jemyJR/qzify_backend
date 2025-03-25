@@ -12,6 +12,7 @@ const { rateLimiter } = require('./shared/middleware/rateLimiter.middleware');
 const { securityMiddleware } = require('./shared/middleware/security.middleware');
 
 const { configureRoutes } = require('./routes');
+const { initCronJobs } = require('./shared/utils/cron');
 
 const app = express();
 
@@ -36,6 +37,7 @@ swaggerMiddleware(app);
 
 app.use(globalValidationMiddleware);
 
+initCronJobs(); 
 
 configureRoutes(app);
 

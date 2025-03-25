@@ -6,9 +6,11 @@ const attemptsRouter = express.Router();
 
 attemptsRouter.use(verifyJWT);
 
+attemptsRouter.get('/', AttemptsConroller.getAllAttemptsByUser);
 attemptsRouter.post('/start', AttemptsConroller.startQuiz);
+attemptsRouter.get('/:id/continue', AttemptsConroller.continueAttempt);
+attemptsRouter.patch('/:id', AttemptsConroller.updateAttempt);
 attemptsRouter.post('/:id/submit', AttemptsConroller.submitQuiz);
 attemptsRouter.get('/:id', AttemptsConroller.getAttemptById);
-attemptsRouter.get('/user/:id', AttemptsConroller.getAllAttemptsByUser);
 
 module.exports = { attemptsRouter };
