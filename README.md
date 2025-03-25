@@ -4,6 +4,18 @@ Qzify is a robust and feature-rich online examination system designed specifical
 
 ---
 
+## 📝 Table of Contents
+
+1. [🚀 Features](#-features)
+2. [🌐 Deployment](#-deployment)
+3. [🛠️ Installation](#-installation)
+4. [📖 Usage](#-usage)
+5. [📚 API Documentation](#-api-documentation)
+6. [📂 Folder Structure](#-folder-structure)
+7. [🌐 Environment Variables](#-environment-variables)
+
+---
+
 ## 🚀 Features
 
 ### **Authentication**
@@ -51,18 +63,18 @@ The project is deployed on **Railway**. You can access the live version of the a
 
 ## 🛠️ Installation
 
-### **1. Clone the Repository**
+### **Clone the Repository**
 ```bash
 git clone <repository-url>
 cd qzify_backend
 ```
 
-### **2. Install Dependencies**
+### **Install Dependencies**
 ```bash
 npm install
 ```
 
-### **3. Configure Environment Variables**
+### **Configure Environment Variables**
 Create a `.env` file in the root directory and configure the following:
 ```
 PORT=3000
@@ -79,7 +91,7 @@ USER_EMAIL=<your-email>
 FRONTEND_URL=http://localhost:3000
 ```
 
-### **4. Start the Server**
+### **Start the Server**
 For development:
 ```bash
 npm run dev
@@ -103,43 +115,49 @@ Access the interactive API documentation at `/api/docs`.
 
 ## 📚 API Documentation
 
+For detailed information about each endpoint, refer to the [API Routes Documentation](./routes.md).
+
 ### **Authentication**
-- **POST** `/auth/register` - Register a new user.
-- **POST** `/auth/login` - User login.
-- **POST** `/auth/forgot-password` - Request password reset.
-- **PATCH** `/auth/reset-password/:token` - Reset user password.
-- **POST** `/auth/change-password` - Change user password.
-- **POST** `/auth/logout` - Logout the user.
+- **POST** `/auth/register` - [Register a new user](./routes.md#post-authregister).
+- **GET** `/auth/verify-email/:token` - [Verify user email](./routes.md#get-authverify-emailtoken).
+- **POST** `/auth/login` - [User login](./routes.md#post-authlogin).
+- **POST** `/auth/refresh-token` - [Refresh access token](./routes.md#post-authrefresh-token).
+- **POST** `/auth/logout` - [Logout the user](./routes.md#post-authlogout).
+- **POST** `/auth/change-password` - [Change user password](./routes.md#post-authchange-password).
+- **POST** `/auth/forgot-password` - [Request password reset](./routes.md#post-authforgot-password).
+- **PATCH** `/auth/reset-password/:token` - [Reset user password](./routes.md#patch-authreset-passwordtoken).
 
 ### **Users**
-- **GET** `/users` - Get all users (Admin only).
-- **GET** `/users/:id` - Get user profile.
-- **PUT** `/users/:id` - Update user profile.
-- **DELETE** `/users/:id` - Delete user profile (Admin only).
+- **GET** `/users` - [Get all users (Admin only)](./routes.md#get-users).
+- **GET** `/users/:id` - [Get user profile](./routes.md#get-usersid).
+- **PUT** `/users/:id` - [Update user profile](./routes.md#put-usersid).
+- **DELETE** `/users/:id` - [Delete user profile (Admin only)](./routes.md#delete-usersid).
 
 ### **Questions**
-- **POST** `/questions` - Create a new question.
-- **GET** `/questions` - Get all questions.
-- **GET** `/questions/:id` - Get question by ID.
-- **PUT** `/questions/:id` - Update a question.
-- **DELETE** `/questions/:id` - Delete a question.
-- **GET** `/questions/category` - Get all available categories.
-- **GET** `/questions/category/:category` - Get questions by category.
-- **POST** `/questions/bulk` - Create multiple questions.
+- **GET** `/questions` - [Get all questions](./routes.md#get-questions).
+- **GET** `/questions/:id` - [Get question by ID](./routes.md#get-questionsid).
+- **POST** `/questions` - [Create a new question](./routes.md#post-questions).
+- **PUT** `/questions/:id` - [Update a question](./routes.md#put-questionsid).
+- **DELETE** `/questions/:id` - [Delete a question](./routes.md#delete-questionsid).
+- **GET** `/questions/category` - [Get all available categories](./routes.md#get-questionscategory).
+- **GET** `/questions/category/:category` - [Get questions by category](./routes.md#get-questionscategorycategory).
+- **POST** `/questions/bulk` - [Create multiple questions](./routes.md#post-questionsbulk).
+- **GET** `/questions/random` - [Generate random quiz](./routes.md#get-questionsrandom).
 
 ### **Attempts**
-- **POST** `/attempts/start` - Start a new quiz attempt.
-- **GET** `/attempts/:id` - Get details of a quiz attempt.
-- **POST** `/attempts/:id/submit` - Submit answers for a quiz attempt.
-- **PATCH** `/attempts/:id` - Update a quiz attempt.
-- **GET** `/attempts` - Get all quiz attempts of the authenticated user.
+- **POST** `/attempts/start` - [Start a new quiz attempt](./routes.md#post-attemptsstart).
+- **GET** `/attempts/:id/continue` - [Continue an in-progress quiz attempt](./routes.md#get-attemptsidcontinue).
+- **PATCH** `/attempts/:id` - [Update a quiz attempt](./routes.md#patch-attemptsid).
+- **POST** `/attempts/:id/submit` - [Submit answers for a quiz attempt](./routes.md#post-attemptsidsubmit).
+- **GET** `/attempts/:id` - [Get details of a quiz attempt](./routes.md#get-attemptsid).
+- **GET** `/attempts` - [Get all quiz attempts of the authenticated user](./routes.md#get-attempts).
 
 ---
 
 ## 📂 Folder Structure
 
 ```
-online_exam_system/
+qzify_backend/
 ├── src/
 │   ├── features/
 │   │   ├── auth/          # Authentication logic
@@ -178,19 +196,4 @@ online_exam_system/
 
 ---
 
-## 📜 Scripts
-
-- **`npm run dev`**: Start the server in development mode.
-- **`npm start`**: Start the server in production mode.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please fork the repository and submit a pull request.
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License.
+By including the table of contents, users can now click directly on the section they want to explore, making the documentation even more user-friendly!
