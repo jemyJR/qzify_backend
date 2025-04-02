@@ -1,8 +1,6 @@
 # 🎓 Qzify Online Examination System
 
-Qzify is a robust and feature-rich online examination system designed specifically for **programming quizzes**. It allows users to generate **general quizzes** or **specific quizzes** based on selected categories, difficulty levels, and the desired number of questions. The platform provides a seamless experience for both administrators and students, ensuring a secure and efficient environment for online assessments.
-
----
+Qzify is a REST API for managing online quizzes, offering endpoints for authentication, role-based user management, quiz creation, and attempt handling. It also includes security features such as JWT authentication, rate limiting, and protection against XSS and NoSQL injections.
 
 ## 📝 Table of Contents
 
@@ -14,8 +12,6 @@ Qzify is a robust and feature-rich online examination system designed specifical
 6. [📂 Folder Structure](#-folder-structure)
 7. [🌐 Environment Variables](#-environment-variables)
 
----
-
 ## 🚀 Features
 
 ### **Authentication**
@@ -23,35 +19,26 @@ Qzify is a robust and feature-rich online examination system designed specifical
 - Login with JWT-based authentication.
 - Password reset via email.
 - Refresh token for session management.
-- Logout from all devices.
+- Revoke access through JWT token versioning.
 
 ### **User Management**
 - Admin-only access to manage users.
 - View, update, and delete user profiles.
 
 ### **Quiz Management**
-- Create, update, delete, and fetch quiz questions.
-- Categorize questions by difficulty and topic.
+- CRUD operations for quiz questions (create, update, delete, fetch).
 - Bulk question creation for efficiency.
+- Categorize questions by difficulty and topic.
 
 ### **Quiz Attempts**
 - Start, continue, and submit quiz attempts.
-- Auto-submit expired attempts.
+- Auto-submit expired attempts via cron jobs.
 - Scoring and detailed review of quiz results.
 
 ### **Security**
-- JWT-based authentication.
 - Rate limiting to prevent abuse.
-- XSS and NoSQL injection protection.
+- Protection against XSS and NoSQL injections.
 - Helmet for secure HTTP headers.
-
-### **API Documentation**
-- Interactive Swagger documentation for all endpoints.
-
-### **Cron Jobs**
-- Automated submission of expired quiz attempts.
-
----
 
 ## 🌐 Deployment
 
@@ -59,7 +46,6 @@ The project is deployed on **Railway**. You can access the live version of the a
 
 [https://qzifybackend-production.up.railway.app](https://qzifybackend-production.up.railway.app)
 
----
 
 ## 🛠️ Installation
 
@@ -101,8 +87,6 @@ For production:
 npm start
 ```
 
----
-
 ## 📖 Usage
 
 ### **API Endpoints**
@@ -110,8 +94,6 @@ Refer to the [API Documentation](https://qzifybackend-production.up.railway.app/
 
 ### **Swagger Docs**
 Access the interactive API documentation at `/api/docs`.
-
----
 
 ## 📚 API Documentation
 
@@ -152,7 +134,6 @@ For detailed information about each endpoint, refer to the [API Routes Documenta
 - **GET** `/attempts/:id` - [Get details of a quiz attempt](./routes.md#get-attemptsid).
 - **GET** `/attempts` - [Get all quiz attempts of the authenticated user](./routes.md#get-attempts).
 
----
 
 ## 📂 Folder Structure
 
@@ -175,8 +156,6 @@ qzify_backend/
 └── README.md              # Project documentation
 ```
 
----
-
 ## 🌐 Environment Variables
 
 | Variable               | Description                          |
@@ -193,7 +172,3 @@ qzify_backend/
 | `SEND_GRID_API_KEY`    | API key for SendGrid email service.  |
 | `USER_EMAIL`           | Sender email address.               |
 | `FRONTEND_URL`         | URL of the frontend application.    |
-
----
-
-By including the table of contents, users can now click directly on the section they want to explore, making the documentation even more user-friendly!
