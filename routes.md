@@ -23,7 +23,6 @@
   }
   ```
 
----
 
 ### **POST** `/auth/login`
 - **Description**: User login.  
@@ -51,7 +50,6 @@
   }
   ```
 
----
 
 ### **POST** `/auth/forgot-password`
 - **Description**: Request password reset.  
@@ -68,7 +66,7 @@
   }
   ```
 
----
+
 
 ### **PATCH** `/auth/reset-password/:token`
 - **Description**: Reset user password.  
@@ -87,7 +85,7 @@
   }
   ```
 
----
+
 
 ### **POST** `/auth/change-password`
 - **Description**: Change user password.  
@@ -106,7 +104,7 @@
   }
   ```
 
----
+
 
 ### **POST** `/auth/logout`
 - **Description**: Logout the user by clearing the refresh token cookie.  
@@ -118,7 +116,7 @@
   }
   ```
 
----
+
 
 ## **Users**
 
@@ -140,7 +138,7 @@
   }
   ```
 
----
+
 
 ### **GET** `/users/:id`
 - **Description**: Get user profile by ID.  
@@ -155,7 +153,6 @@
   }
   ```
 
----
 
 ### **PUT** `/users/:id`
 - **Description**: Update user profile.  
@@ -184,7 +181,7 @@
   }
   ```
 
----
+
 
 ### **DELETE** `/users/:id`
 - **Description**: Delete user profile (Admin only).  
@@ -196,7 +193,7 @@
   }
   ```
 
----
+
 
 ## **Questions**
 
@@ -222,7 +219,7 @@
   }
   ```
 
----
+
 
 ### **GET** `/questions/:id`
 - **Description**: Get question by ID.  
@@ -243,7 +240,7 @@
   }
   ```
 
----
+
 
 ### **POST** `/questions`
 - **Description**: Create a new question.  
@@ -277,7 +274,7 @@
   }
   ```
 
----
+
 
 ### **PUT** `/questions/:id`
 - **Description**: Update a question.  
@@ -311,7 +308,7 @@
   }
   ```
 
----
+
 
 ### **DELETE** `/questions/:id`
 - **Description**: Delete a question.  
@@ -323,7 +320,7 @@
   }
   ```
 
----
+
 
 ### **GET** `/questions/category`
 - **Description**: Get all available categories.  
@@ -336,7 +333,7 @@
   }
   ```
 
----
+
 
 ### **GET** `/questions/category/:category`
 - **Description**: Get questions by category.  
@@ -349,7 +346,7 @@
   }
   ```
 
----
+
 
 ### **POST** `/questions/bulk`
 - **Description**: Create multiple questions.  
@@ -372,7 +369,7 @@
   }
   ```
 
----
+
 
 ## **Attempts**
 
@@ -410,7 +407,7 @@
   }
   ```
 
----
+
 
 ### **GET** `/attempts/:id`
 - **Description**: Get details of a quiz attempt.  
@@ -442,7 +439,6 @@
   }
   ```
 
----
 
 ### **POST** `/attempts/:id/submit`
 - **Description**: Submit answers for a quiz attempt.  
@@ -471,7 +467,7 @@
   }
   ```
 
----
+
 
 ### **PATCH** `/attempts/:id`
 - **Description**: Update a quiz attempt (e.g., flag questions or save chosen answers).  
@@ -496,7 +492,7 @@
   }
   ```
 
----
+
 
 ### **GET** `/attempts`
 - **Description**: Get all quiz attempts of the authenticated user.  
